@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head></head>
+  <header>Welcome to my URL shortener APP!</header>
+<br>
   <body style="font-size:20px; padding:50px;">
     <% include partials/_header %>
+    
+    <% for (let url in urls){%>
+       <li> <%= url %> -> <a href= <%= urls[url] %>> <%= urls[url] %> </a>
+       <form method="POST" action="/urls/<%= url %>/delete"><button type="submit">Delete</button><br>
+       </form>
+       <a href="/urls/<%= url %>">Edit</a> 
+    </li>
+    <% } %>
+    
     <form action="/urls" method="POST" style="margin:150px;">
       <label for="longURL">Enter a URL:</label>
       <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
       <input type="submit" value="Submit">
-    </form>
+    <form method="POST" action="/urls/shortURL/delete"></form>
   </body>
 </html>

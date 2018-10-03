@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+  <header>Welcome to my URL shortener APP!</header>
+<br>
+  <body style="font-size:20px; padding:50px;">
+    <% include partials/_header %>
+    
+    shortURL : <%= shortURL %>
+    <label for="UPDATE"></label><br>
+    <form method="POST" action="/urls/<%= shortURL %>"><button type="submit">Update</button>
+    <input id="UPDATE" type="text" name="longURL" placeholder="" style="width: 300px"></form>
+  </body>
+</html>

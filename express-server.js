@@ -36,7 +36,7 @@ var urlDatabase = {
     app.get("/urls/:id", (req, res) => {
         let templateVars = {shortURL: req.params.id};
         res.render("urls_show", templateVars);
-    });
+    }); 
     app.post("/urls", (req, res) => {
         const shortURL = generateRandomString();
         urlDatabase[shortURL] = req.body.longURL;
@@ -45,13 +45,23 @@ var urlDatabase = {
     });
     app.get("/u/:shortURL", (req, res) => {
         let shortURL = req.params.shortURL;
-       let longURL = urlDatabase[shortURL];
+        let longURL = urlDatabase[shortURL];
         if (longURL === undefined){
             res.status(404).send('Not Found')
         } else {
             res.redirect(longURL)
         }
     });
+    app.post("/urls/:id/delete", (req, res) => {
+        delete urlDatabase[req.params.id];
+        res.redirect("/urls");
+    });
+    app.post("/urls/:id", (req, res) => {
+        let updatedURL = req.body.longURL;
+        let shortURL = req.params.id;
+        urlDatabase[shortURL] = updatedURL;
+        res.redirect("/urls");
+    })
     app.listen(PORT, () => {
             console.log(`Example app listening on port ${PORT}!`);
         });

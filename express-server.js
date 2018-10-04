@@ -2,7 +2,9 @@ var express = require('express');
 var app = express();
 var PORT = 8080; //default port
 const bodyParser = require("body-parser");
+var cookie = require('cookie-parser');
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookie());
 app.set("view engine", "ejs");
 
 
@@ -30,7 +32,10 @@ var urlDatabase = {
         res.send("<html><body>Hello <b>World</b></body></html>\n");
     });
     app.get("/urls", (req, res) => {
-        let templateVars = { urls: urlDatabase };
+        let templateVars = { 
+            urls: urlDatabase,
+            username: req.cookies["username"]
+        };
         res.render("urls_index", templateVars);
     });
     app.get("/urls/:id", (req, res) => {
@@ -60,6 +65,14 @@ var urlDatabase = {
         let updatedURL = req.body.longURL;
         let shortURL = req.params.id;
         urlDatabase[shortURL] = updatedURL;
+        res.redirect("/urls");
+    });
+    app.post("/login", (req, res) => {
+        res.cookie('username', req.body.login)
+        res.redirect("/urls");
+    });
+    app.post("/logout", (req,res) => {
+        res.clearCookie('username');
         res.redirect("/urls");
     })
     app.listen(PORT, () => {

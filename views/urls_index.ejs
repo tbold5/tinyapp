@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-  <header>Welcome to my URL shortener APP!</header>
+    <head>   
+        <title>TinyApp</title>
 <br>
-  <body style="font-size:20px; padding:50px;">
+    </head>
+  
+ <body style="font-size:20px; padding:30px;">
+    <header>
+     <h1>Welcome to my URL shortener APP!</h1>
     <% include partials/_header %>
+    </header>
     
     <% for (let url in urls){%>
-       <li> <%= url %> -> <a href= <%= urls[url] %>> <%= urls[url] %> </a>
-       <form method="POST" action="/urls/<%= url %>/delete"><button type="submit">Delete</button><br>
-       </form>
-       <a href="/urls/<%= url %>">Edit</a> 
+    <li style="padding  = 15px;"> 
+    <%= url %> -> <a href= <%= urls[url] %>> <%= urls[url] %> </a>
+    <form style="display: inline-block;" method="POST" action="/urls/<%= url %>/delete">
+        <button style="margin: 15px;" type="submit">Delete</button><br>
+    </form>
+    <a style="margin: 10px;" href="/urls/<%= url %>">Edit</a>
     </li>
+    <br>
     <% } %>
-    
-    <form action="/urls" method="POST" style="margin:150px;">
+    <form action="/urls" method="POST">
       <label for="longURL">Enter a URL:</label>
       <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
       <input type="submit" value="Submit">

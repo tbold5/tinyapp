@@ -7,6 +7,18 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookie());
 app.set("view engine", "ejs");
 
+const users = { 
+    "userRandomID": {
+      id: "userRandomID", 
+      email: "user@example.com", 
+      password: "purple-monkey-dinosaur"
+    },
+   "user2RandomID": {
+      id: "user2RandomID", 
+      email: "user2@example.com", 
+      password: "dishwasher-funk"
+    }
+  }
 
 function generateRandomString() {
     // toString method 0-9 gives numbers, 10-36 gives alphabets
@@ -32,23 +44,26 @@ var urlDatabase = {
         res.send("<html><body>Hello <b>World</b></body></html>\n");
     });
     app.get("/urls", (req, res) => {
+        var user_id = users.id;         // help help this is wrong, what do we do?!?!?!!
         let templateVars = { 
             urls: urlDatabase,
-            username: req.cookies["username"]
+            userID: req.cookies["user_id"],
+            user: users[user_id]
         };
         res.render("urls_index", templateVars);
     });
     app.get("/urls/:id", (req, res) => {
+        var user_id = users.id;
         let templateVars = {
             shortURL: req.params.id,
-            username: req.cookies["username"]
+            userID: req.cookies["user_id"],
+            users: users[user_id]
         };
         res.render("urls_show", templateVars);
     }); 
     app.post("/urls", (req, res) => {
         const shortURL = generateRandomString();
         urlDatabase[shortURL] = req.body.longURL;
-        console.log(urlDatabase);
         res.redirect("/urls/" + shortURL);
     });
     app.get("/u/:shortURL", (req, res) => {
@@ -71,13 +86,51 @@ var urlDatabase = {
         res.redirect("/urls");
     });
     app.post("/login", (req, res) => {
-        res.cookie('username', req.body.login)
+        res.cookie('user_id', req.cookies["user_id"])
         res.redirect("/urls");
     });
     app.post("/logout", (req,res) => {
-        res.clearCookie('username');
+        res.clearCookie('user_id');
         res.redirect("/urls");
-    })
+    });
+    app.get("/register", (req, res) => {
+        var user_id = users.id;
+        let templateVars = {
+            shortURL: req.params.id,
+            userID: req.cookies["user_id"],
+            user: users[user_id]
+        };
+        res.render('urls_register', templateVars)
+    });
+    app.post("/register", (req, res) => {
+        let userID = generateRandomString()
+        let email = req.body.email;
+        let password = req.body.password;
+        var error = false;
+        if(email === "" || password === "") {
+            res.status(400).send('Registration Empty')
+            return;
+        } 
+        for (var user in users) {
+            if(users[user].email === email) {
+                res.status(400).send('Email already exists')
+                return;
+            };
+        };
+        users[userID] = {                   
+            id: userID,
+            email: email,
+            password: password,
+        }
+    
+        res.cookie("user_id", userID);
+        res.redirect("/urls")
+    });
+    
+    app.get("/login", (req, res) => {
+      res.render('urls_login');
+    });
+
     app.listen(PORT, () => {
-            console.log(`Example app listening on port ${PORT}!`);
-        });
+        console.log(`Example app listening on port ${PORT}!`);
+    });

@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>   
-        <title>TinyApp</title>
-    </head>
-<% if (username) { %>
-Logged as: <%= username %> 
+
+
+
+Logged as: <%= userID %> 
 <form method="POST", action="/logout">
-<button type="submit",>Logout</button></form>
-<% } else { %> 
-    <form method="POST", action="/login">
-        <label for="urls/login">Enter Username:</label>
-        <input id="urls/login" type="text" name="login">
-        <input type="submit" value="login">
-    </form> <% } %>
+    <button type="submit",>Logout</button></form>
+<a href="/login">Login</a>
+<a href="/register">Register</a>
+    

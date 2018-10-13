@@ -4,11 +4,10 @@
         <title>TinyApp</title>
     </head>
 <body style="font-size:20px; padding:50px;">
-    <!-- <% include ./partials/_header %> -->
 
     shortURL : <%= shortURL %>
     <label for="UPDATE"></label><br>
     <form method="POST" action="/urls/<%= shortURL %>"><button type="submit">Update</button>
-    <input id="UPDATE" type="text" name="longURL" placeholder="" style="width: 300px"></form>
+    <input type="text" name="longURL" style="width: 300px"></form>
   </body>
 </html>

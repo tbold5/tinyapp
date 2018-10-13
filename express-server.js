@@ -8,10 +8,10 @@ app.use(cookie());
 app.set("view engine", "ejs");
 
 const users = { 
-    "userRandomID": {
-      id: "userRandomID", 
+    "d7fs": {
+      id: "d7fs", 
       email: "user@example.com", 
-      password: "purple-monkey-dinosaur"
+      password: "1"
     },
    "user2RandomID": {
       id: "user2RandomID", 
@@ -25,6 +25,21 @@ function generateRandomString() {
     // substr(2,6) because Math.random takes 0 and period as (0, 1)
      return Math.random().toString(36).substr(2,6);
     };
+function findEmail(input) {
+    for (var user in users) {
+        if (users[user].email === input) {
+            return true
+    }
+} return false;
+};
+
+function findPassword(input) {
+    for (var user in users) {
+        if (users[user].password === input) {
+            return true
+    }
+} return false;
+};
 
 var urlDatabase = {
     "b2xVn2": "http://www.lighthouselabs.ca",
@@ -44,20 +59,44 @@ var urlDatabase = {
         res.send("<html><body>Hello <b>World</b></body></html>\n");
     });
     app.get("/urls", (req, res) => {
-        var user_id = users.id;         // help help this is wrong, what do we do?!?!?!!
+        console.log("req.cookies[user_id]: ", req.cookies[user_id])
+        // var user = ???? 
+        if (req.cookies) {
+            for (var user in users) {
+                console.log("user", user)
+                console.log("users[req.cookies[user_id]]", users[req.cookies[user_id]])
+
+                if (users[req.cookies[user_id]]) {
+                    user = users[req.cookies[user_id]] 
+                }
+           
+
+
+
+                // if (req.cookies[user_id] === users[user]) {
+                //     user
+                // }
+            }
+        }
+        console.log("req.cookies", req.cookies)
+
+        console.log("res.params: ", res.params)
+        
+        
+        var user_id = users.session
+        // console.log(users);
         let templateVars = { 
             urls: urlDatabase,
             userID: req.cookies["user_id"],
-            user: users[user_id]
+            user: user
         };
         res.render("urls_index", templateVars);
     });
     app.get("/urls/:id", (req, res) => {
-        var user_id = users.id;
         let templateVars = {
             shortURL: req.params.id,
             userID: req.cookies["user_id"],
-            users: users[user_id]
+            user: users["user_id"]
         };
         res.render("urls_show", templateVars);
     }); 
@@ -86,18 +125,35 @@ var urlDatabase = {
         res.redirect("/urls");
     });
     app.post("/login", (req, res) => {
-        res.cookie('user_id', req.cookies["user_id"])
-        res.redirect("/urls");
+        // get user with email from user db
+        // if there is a user and the passwords match,
+        // set cookie, redirect to /urls
+        // otherwise, redirect to /login
+        let email = req.body.email;
+        let password = req.body.password;
+        if (findEmail(email) && findPassword(password)) {
+           for (var user in users){
+            if (users[user].email === req.body.email) {
+                // req.session("user_id") = user
+                res.cookie("user_id", user)
+            } 
+        }
+            res.redirect("/urls")
+        } else {
+        // res.cookie('user_id', req.cookies["user_id"])
+        res.redirect("/login");
+        }
     });
     app.post("/logout", (req,res) => {
         res.clearCookie('user_id');
+        req.session = undefined;
         res.redirect("/urls");
     });
     app.get("/register", (req, res) => {
-        var user_id = users.id;
+        var user_id = req.cookies["user_id"];
         let templateVars = {
             shortURL: req.params.id,
-            userID: req.cookies["user_id"],
+            userID: user_id,
             user: users[user_id]
         };
         res.render('urls_register', templateVars)
@@ -128,7 +184,7 @@ var urlDatabase = {
     });
     
     app.get("/login", (req, res) => {
-      res.render('urls_login');
+        res.render('urls_login');
     });
 
     app.listen(PORT, () => {
